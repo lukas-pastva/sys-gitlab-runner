@@ -5,6 +5,7 @@ RUN groupadd -g 113 docker && \
 
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+    bc \
     docker.io \
     gettext-base \
     jq \
