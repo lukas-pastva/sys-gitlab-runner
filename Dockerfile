@@ -1,12 +1,8 @@
-FROM gitlab/gitlab-runner:v14.4.2
-
-RUN groupadd -g 113 docker && \
-    usermod -a -G docker gitlab-runner
+FROM gitlab/gitlab-runner:v15.11.0
 
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
     bc \
-    docker.io \
     gettext-base \
     jq \
     unzip \
@@ -14,9 +10,13 @@ RUN apt-get update -y && \
 	p7zip-full && \
 	rm -rf /var/lib/apt/lists/*
 
-RUN curl -L https://github.com/docker/compose/releases/download/v2.10.2/docker-compose-linux-x86_64 -o '/usr/local/bin/docker-compose' && \
-    chmod +x /usr/local/bin/docker-compose && \
-    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+# kubectl
+RUN curl -o /usr/local/bin/kubectl -JLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    chmod +x /usr/local/bin/kubectl \
+
+COPY kaniko.yml /usr/local/bin
+COPY build-k8s.sh /usr/local/bin
+RUN chmod +x /usr/local/bin/build-k8s.sh
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh

@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko-${HASH}
+spec:
+  containers:
+    - name: kaniko-${HASH}
+      image: gcr.io/kaniko-project/executor:latest
+      args:
+        - "--destination=${DESTINATION}"
+        - "--destination=${DESTINATION_LATEST}"
+        - "--context=${CONTEXT}"
+        - "--context-sub-path=${CONTEXT_PATH}"
+        - "--dockerfile=${DOCKERFILE}"
+      volumeMounts:
+        - name: kaniko-${HASH}
+          mountPath: "/kaniko/.docker/config.json"
+          subPath: config.json
+  restartPolicy: Never
+  volumes:
+    - name: kaniko-${HASH}
+      secret:
+        secretName: kaniko-${HASH}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kaniko-${HASH}
+data:
+  config.json: "${DOCKERCONFIGJSON}"
+type: Opaque
