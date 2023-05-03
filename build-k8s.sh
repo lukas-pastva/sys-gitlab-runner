@@ -11,9 +11,9 @@ export DOCKERCONFIGJSON=$(echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo 
 envsubst < /usr/local/bin/kaniko.yml > kaniko-${HASH}.yml
 
 kubectl apply -f kaniko-${HASH}.yml
-sleep 5
+sleep 15
 
 kubectl -n sys-runner logs -f kaniko-${HASH}
 sleep 5
 
-kubectl delete -f kaniko-${HASH}.yml
+# kubectl delete -f kaniko-${HASH}.yml
