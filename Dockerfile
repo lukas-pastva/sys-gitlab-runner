@@ -2,6 +2,7 @@ FROM gitlab/gitlab-runner:v15.11.0
 
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+    apache2-utils \
     bc \
     gettext-base \
     jq \
