@@ -1,7 +1,8 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: kaniko-${HASH}
+  name: kaniko-pod-${HASH}
+  namespace: sys-gitlab
 spec:
   containers:
     - name: kaniko-${HASH}
@@ -21,11 +22,3 @@ spec:
     - name: kaniko-${HASH}
       secret:
         secretName: kaniko-${HASH}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kaniko-${HASH}
-data:
-  config.json: "${DOCKERCONFIGJSON}"
-type: Opaque

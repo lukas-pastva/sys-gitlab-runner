@@ -1,35 +1,91 @@
-FROM gitlab/gitlab-runner:v15.11.0
+FROM php:8.0.20-apache
 
-# Install dependencies
+USER root
+
 RUN apt-get update -y && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     apache2-utils \
+    apt-transport-https \
     bc \
-    gettext-base \
-    jq \
-    unzip \
-    zip \
-	p7zip-full \
+    ca-certificates \
+    containerd \
     curl \
+    gettext-base \
+    gnupg-agent \
+    imagemagick \
+    jq \
+    libargon2-dev \
+    libc-client-dev \
+    libcurl4-openssl-dev \
+    libedit-dev \
+    libkrb5-dev \
+    libonig-dev \
+    libpng-dev \
+    libsodium-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    libxml2-dev \
+    libzip-dev \
+    make \
+    p7zip-full \
     software-properties-common \
-    gnupg-agent && \
-    rm -rf /var/lib/apt/lists/*
+    unzip \
+    wget \
+    zip \
+    zlib1g-dev && \
+  rm -rf /var/lib/apt/lists/*
 
-# kubectl
-RUN curl -o /usr/local/bin/kubectl -JLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
-    chmod +x /usr/local/bin/kubectl
 
 # Install Docker
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
     add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
     apt-get update && \
-    apt-get install -y docker-ce docker-ce-cli containerd.io
+    apt-get install -y docker-ce docker-ce-cli containerd.io \
 
 # Install Docker Compose
 RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
     chmod +x /usr/local/bin/docker-compose
 
-COPY kaniko.yml /usr/local/bin
+# kubectl
+RUN curl -o /usr/local/bin/kubectl -JLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    chmod +x /usr/local/bin/kubectl
+
+# removing as not required
+#RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
+#RUN docker-php-ext-install imap
+#RUN docker-php-ext-install mysqli
+#RUN docker-php-ext-install pdo_mysql
+#RUN docker-php-ext-install bcmath
+#RUN docker-php-ext-install iconv
+#RUN docker-php-ext-install zip
+#RUN docker-php-ext-install intl
+#RUN docker-php-ext-install gd
+#RUN docker-php-ext-install soap
+#RUN docker-php-ext-install sockets
+#RUN docker-php-ext-install pcntl
+#RUN docker-php-ext-enable sodium
+#RUN docker-php-ext-configure intl
+#RUN printf "\n" | pecl install imagick
+#RUN docker-php-ext-enable imagick
+
+# composer
+RUN mkdir -p /composer/vendor/
+ENV COMPOSER_HOME=/composer
+ENV PATH /composer/vendor/bin:$PATH
+ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# gitlab runner
+RUN curl "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" -o /gl.sh && \
+    os=ubuntu dist=trusty bash /gl.sh && \
+    apt-get install gitlab-runner -y && \
+    rm /gl.sh && \
+    rm -rf /var/lib/apt/lists/*
+
+# kaniko
+COPY kaniko-secret.yml /usr/local/bin
+COPY kaniko-pod.yml /usr/local/bin
 COPY build-k8s.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/build-k8s.sh
 

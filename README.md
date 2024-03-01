@@ -1,2 +1,5 @@
-# gitlab-runner
-- My version of GL runner, a little advanced, no big deal
+# GitLab runner 
+
+- Runner has two features:
+  - for Docker-in-Docker (OnPrem runner)
+  - Runner inside k8s for Kaniko
