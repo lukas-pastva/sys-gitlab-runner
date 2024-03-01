@@ -13,6 +13,7 @@ RUN apt-get update -y && \
     curl \
     gettext-base \
     gnupg-agent \
+    gnupg \
     imagemagick \
     jq \
     libargon2-dev \
@@ -36,21 +37,6 @@ RUN apt-get update -y && \
     zlib1g-dev && \
   rm -rf /var/lib/apt/lists/*
 
-
-# Install Docker
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
-    apt-get update && \
-    apt-get install -y docker-ce docker-ce-cli containerd.io \
-
-# Install Docker Compose
-RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
-    chmod +x /usr/local/bin/docker-compose
-
-# kubectl
-RUN curl -o /usr/local/bin/kubectl -JLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
-    chmod +x /usr/local/bin/kubectl
-
 # removing as not required
 #RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 #RUN docker-php-ext-install imap
@@ -68,6 +54,20 @@ RUN curl -o /usr/local/bin/kubectl -JLO "https://dl.k8s.io/release/$(curl -L -s 
 #RUN docker-php-ext-configure intl
 #RUN printf "\n" | pecl install imagick
 #RUN docker-php-ext-enable imagick
+
+# Install Docker
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
+    apt-get update && \
+    apt-get install -y docker-ce docker-ce-cli containerd.io
+
+# Install Docker Compose
+RUN curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
+    chmod +x /usr/local/bin/docker-compose
+
+# kubectl
+RUN curl -o /usr/local/bin/kubectl -JLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    chmod +x /usr/local/bin/kubectl
 
 # composer
 RUN mkdir -p /composer/vendor/
