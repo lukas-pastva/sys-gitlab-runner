@@ -4,13 +4,6 @@ metadata:
   name: kaniko-pod-${HASH}
   namespace: sys-gitlab
 spec:
-  initContainers:
-    - name: init-ca-certificates
-      image: busybox
-      command: ["sh", "-c", "cp /certs/ca.crt /usr/local/share/ca-certificates/ca.crt && update-ca-certificates"]
-      volumeMounts:
-        - name: certificates
-          mountPath: /certs
   containers:
     - name: kaniko-${HASH}
       image: gcr.io/kaniko-project/executor:latest
@@ -24,13 +17,8 @@ spec:
         - name: kaniko-${HASH}
           mountPath: "/kaniko/.docker/config.json"
           subPath: config.json
-        - name: certificates
-          mountPath: /usr/local/share/ca-certificates
   restartPolicy: Never
   volumes:
     - name: kaniko-${HASH}
-      secret:
-        secretName: kaniko-${HASH}
-    - name: certificates
       secret:
         secretName: kaniko-${HASH}
