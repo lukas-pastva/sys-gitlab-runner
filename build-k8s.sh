@@ -56,5 +56,5 @@ while true; do
 done
 
 sleep 5
-#kubectl delete -f kaniko-pod-${HASH}.yml
-#kubectl delete -f kaniko-secret-${HASH}.yml
+kubectl delete -f kaniko-pod-${HASH}.yml
+kubectl delete -f kaniko-secret-${HASH}.yml
