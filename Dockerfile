@@ -35,7 +35,7 @@ RUN apt-get update -y && \
     wget \
     zip \
     zlib1g-dev && \
-  rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 # removing as not required
 #RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
@@ -77,12 +77,10 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # gitlab runner
-ARG GITLAB_RUNNER_VERSION=17.2.0-1
-RUN curl "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" -o /gl.sh && \
-    os=ubuntu dist=trusty bash /gl.sh && \
-    apt-get install gitlab-runner=${GITLAB_RUNNER_VERSION} -y && \
-    rm /gl.sh && \
-    rm -rf /var/lib/apt/lists/*
+ARG GITLAB_RUNNER_VERSION=17.2.0
+RUN wget https://gitlab.com/gitlab-org/gitlab-runner/-/releases/v${GITLAB_RUNNER_VERSION}/downloads/packages/deb/gitlab-runner_amd64.deb && \
+    dpkg -i gitlab-runner_amd64.deb && \
+    rm gitlab-runner_amd64.deb
 
 # kaniko
 COPY kaniko-secret.yml /usr/local/bin
