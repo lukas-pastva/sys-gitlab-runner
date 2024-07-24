@@ -77,7 +77,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # gitlab runner
-ARG GITLAB_RUNNER_VERSION=17.0.4
+ARG GITLAB_RUNNER_VERSION=17.0.0
 RUN curl "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" -o /gl.sh && \
     os=ubuntu dist=trusty bash /gl.sh && \
     apt-get install gitlab-runner=${GITLAB_RUNNER_VERSION} -y && \
