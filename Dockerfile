@@ -55,6 +55,9 @@ RUN apt-get update -y && \
 #RUN printf "\n" | pecl install imagick
 #RUN docker-php-ext-enable imagick
 
+# Install yq
+RUN curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/bin/yq && chmod +x /usr/bin/yq
+
 # Install Docker
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
     echo "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list && \
