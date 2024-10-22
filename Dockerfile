@@ -80,8 +80,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # gitlab runner
-ARG GITLAB_RUNNER_VERSION=17.0.0
-RUN wget https://gitlab.com/gitlab-org/gitlab-runner/-/releases/v${GITLAB_RUNNER_VERSION}/downloads/packages/deb/gitlab-runner_amd64.deb && \
+RUN wget https://gitlab-runner-downloads.s3.amazonaws.com/v17.5.1/deb/gitlab-runner_amd64.deb && \
     dpkg -i gitlab-runner_amd64.deb && \
     rm gitlab-runner_amd64.deb
 
